@@ -4,8 +4,26 @@ plugins {
     id("org.jetbrains.kotlin.plugin.compose")
 }
 
-android { namespace = "com.example.homeworkreminder"; compileSdk = 35
-    defaultConfig { applicationId = "com.example.homeworkreminder"; minSdk = 26; targetSdk = 35; versionCode = 1; versionName = "1.0" }
+android {
+    namespace = "com.example.homeworkreminder"
+    compileSdk = 35
+
+    defaultConfig {
+        applicationId = "com.example.homeworkreminder"
+        minSdk = 26
+        targetSdk = 35
+        versionCode = 1
+        versionName = "1.0"
+    }
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_21
+        targetCompatibility = JavaVersion.VERSION_21
+    }
+
+    kotlinOptions {
+        jvmTarget = "21"
+    }
 }
 
 dependencies {
