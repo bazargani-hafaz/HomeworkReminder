@@ -21,7 +21,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.json.JSONArray
@@ -56,7 +58,7 @@ fun HomeworkApp(context: Context) {
     val progress = if (tasks.isEmpty()) 0f else completed.toFloat() / tasks.size
 
     MaterialTheme(colorScheme = darkColorScheme(primary = Accent, background = Bg, surface = Card)) {
-        CompositionLocalProvider(LocalLayoutDirection provides androidx.compose.ui.unit.LayoutDirection.Rtl) {
+        CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
             Surface(Modifier.fillMaxSize(), color = Bg) {
                 Box(Modifier.fillMaxSize()) {
                     Column(Modifier.fillMaxSize().padding(horizontal = 18.dp)) {
