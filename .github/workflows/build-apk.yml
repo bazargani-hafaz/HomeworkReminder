@@ -36,11 +36,16 @@ jobs:
           python3 - <<'PY'
           p = "app/src/main/java/com/example/homeworkreminder/MainActivity.kt"
           lines = open(p, encoding="utf-8").readlines()
-          # JalaliCalendar is generated on one long line. The calendar body
-          # needs two additional closing braces before the function's own brace.
+          # The generated JalaliCalendar line has exactly two extra closing
+          # braces before the function's own closing brace. Remove those two.
           i = 155
           line = lines[i].rstrip("\n")
-          lines[i] = line + "}}\n"
+          for _ in range(2):
+              line = line.rstrip()
+              if not line.endswith("}"):
+                  raise SystemExit("Unexpected JalaliCalendar brace layout")
+              line = line[:-1]
+          lines[i] = line + "\n"
           open(p, "w", encoding="utf-8").writelines(lines)
           PY
       - name: Build debug APK
