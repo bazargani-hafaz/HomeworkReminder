@@ -33,7 +33,20 @@ jobs:
           sed -i 's/^@Composable fun SettingsScreen(/@Composable fun ColumnScope.SettingsScreen(/' app/src/main/java/com/example/homeworkreminder/MainActivity.kt
       - name: Fix Jalali calendar syntax
         run: |
-          sed -i '156s/} }$/ }/' app/src/main/java/com/example/homeworkreminder/MainActivity.kt
+          python3 - <<'PY'
+          p = "app/src/main/java/com/example/homeworkreminder/MainActivity.kt"
+          lines = open(p, encoding="utf-8").readlines()
+          # The JalaliCalendar body is line 156 in the generated source.
+          # Remove exactly one extra closing brace from the end of that line.
+          i = 155
+          line = lines[i].rstrip("\n")
+          if line.endswith("} }"):
+              line = line[:-2]
+          elif line.endswith("}}"):
+              line = line[:-1]
+          lines[i] = line + "\n"
+          open(p, "w", encoding="utf-8").writelines(lines)
+          PY
       - name: Build debug APK
         run: gradle :app:assembleDebug
       - name: Upload APK
