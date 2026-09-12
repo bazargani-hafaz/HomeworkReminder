@@ -30,11 +30,19 @@ jobs:
         uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '8.9'
-      - name: Verify Kotlin source structure
+      - name: Fix Kotlin source syntax
         run: |
-          grep -n "fun JalaliCalendar" app/src/main/java/com/example/homeworkreminder/MainActivity.kt
-          grep -n "fun ColumnScope.StatsScreen" app/src/main/java/com/example/homeworkreminder/MainActivity.kt
-          tail -n 5 app/src/main/java/com/example/homeworkreminder/MainActivity.kt
+          python3 - <<'PY'
+          p = "app/src/main/java/com/example/homeworkreminder/MainActivity.kt"
+          text = open(p, encoding="utf-8").read()
+          text = text.replace(":List<Homework>=", ":List<Homework> =")
+          text = text.replace(":MutableList<DayPlan>=", ":MutableList<DayPlan> =")
+          open(p, "w", encoding="utf-8").write(text)
+          PY
+      - name: Verify Kotlin source
+        run: |
+          grep -n "fun loadTasks" app/src/main/java/com/example/homeworkreminder/MainActivity.kt
+          grep -n "fun loadWeek" app/src/main/java/com/example/homeworkreminder/MainActivity.kt
       - name: Build debug APK
         run: gradle :app:assembleDebug
       - name: Upload APK
