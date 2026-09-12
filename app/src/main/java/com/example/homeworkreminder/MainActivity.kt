@@ -151,9 +151,46 @@ fun ColumnScope.HomeScreen(tasks: List<Homework>, accent: Color, onAdd: () -> Un
     LazyColumn(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(8.dp), contentPadding = PaddingValues(bottom = 110.dp)) { items(target,key={it.id}){ TaskCard(it,accent,onEdit,{},onDone,{}) }; if(target.isEmpty()) item{EmptyState("📅","این ماه خالی است","هنوز تکلیفی برای این ماه ثبت نشده")} }
 }
 
-@Composable fun JalaliCalendar(tasks: List<Homework>, base: Calendar, prev: () -> Unit, next: () -> Unit) {
-    val names=listOf("فروردین","اردیبهشت","خرداد","تیر","مرداد","شهریور","مهر","آبان","آذر","دی","بهمن","اسفند"); val j=gregorianToJalali(base.get(Calendar.YEAR),base.get(Calendar.MONTH)+1,1); val jy=j.first; val jm=j.second; val days=jalaliMonthDays(jy,jm); val g=jalaliToGregorian(jy,jm,1); val first=Calendar.getInstance().apply{set(g[0],g[1]-1,g[2])}; val offset=(first.get(Calendar.DAY_OF_WEEK)+1)%7
-    Column(Modifier.fillMaxWidth().clip(RoundedCornerShape(22.dp)).background(MaterialTheme.colorScheme.surface).padding(13.dp)) { Row(Modifier.fillMaxWidth(),horizontalArrangement=Arrangement.SpaceBetween,verticalAlignment=Alignment.CenterVertically){IconButton(onClick=prev){Icon(Icons.Default.ChevronRight,null)};Text("${names[jm-1]} $jy",color=MaterialTheme.colorScheme.onSurface,fontSize=17.sp,fontWeight=FontWeight.Bold);IconButton(onClick=next){Icon(Icons.Default.ChevronLeft,null)}}; Row(Modifier.fillMaxWidth(),horizontalArrangement=Arrangement.SpaceEvenly){listOf("ش","ی","د","س","چ","پ","ج").forEach{Text(it,color=Muted,fontSize=10.sp,modifier=Modifier.width(35.dp),textAlign=TextAlign.Center)}}; val cells=List(offset){0}+(1..days).toList(); val padded=cells+List((7-cells.size%7)%7){0}; padded.chunked(7).forEach{week->Row(Modifier.fillMaxWidth(),horizontalArrangement=Arrangement.SpaceEvenly){week.forEach{d->val has=if(d==0)false else tasks.any{t->val x=taskJalali(t.due);x[0]==jy&&x[1]==jm&&x[2]==d};Box(Modifier.size(35.dp),contentAlignment=Alignment.Center){if(d>0)Column(horizontalAlignment=Alignment.CenterHorizontally){Text(d.toString(),color=MaterialTheme.colorScheme.onSurface,fontSize=11.sp);if(has)Text("•",color=MaterialTheme.colorScheme.primary,fontSize=12.sp)}}}}} } }
+@Composable
+fun JalaliCalendar(tasks: List<Homework>, base: Calendar, prev: () -> Unit, next: () -> Unit) {
+    val names = listOf("فروردین", "اردیبهشت", "خرداد", "تیر", "مرداد", "شهریور", "مهر", "آبان", "آذر", "دی", "بهمن", "اسفند")
+    val j = gregorianToJalali(base.get(Calendar.YEAR), base.get(Calendar.MONTH) + 1, 1)
+    val jy = j.first
+    val jm = j.second
+    val days = jalaliMonthDays(jy, jm)
+    val g = jalaliToGregorian(jy, jm, 1)
+    val first = Calendar.getInstance().apply { set(g[0], g[1] - 1, g[2]) }
+    val offset = (first.get(Calendar.DAY_OF_WEEK) + 1) % 7
+    Column(Modifier.fillMaxWidth().clip(RoundedCornerShape(22.dp)).background(MaterialTheme.colorScheme.surface).padding(13.dp)) {
+        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
+            IconButton(onClick = prev) { Icon(Icons.Default.ChevronRight, null) }
+            Text("${names[jm - 1]} $jy", color = MaterialTheme.colorScheme.onSurface, fontSize = 17.sp, fontWeight = FontWeight.Bold)
+            IconButton(onClick = next) { Icon(Icons.Default.ChevronLeft, null) }
+        }
+        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
+            listOf("ش", "ی", "د", "س", "چ", "پ", "ج").forEach { dayName -> Text(dayName, color = Muted, fontSize = 10.sp, modifier = Modifier.width(35.dp), textAlign = TextAlign.Center) }
+        }
+        val cells = List(offset) { 0 } + (1..days).toList()
+        val padded = cells + List((7 - cells.size % 7) % 7) { 0 }
+        padded.chunked(7).forEach { week ->
+            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
+                week.forEach { d ->
+                    val has = d > 0 && tasks.any { t ->
+                        val x = taskJalali(t.due)
+                        x[0] == jy && x[1] == jm && x[2] == d
+                    }
+                    Box(Modifier.size(35.dp), contentAlignment = Alignment.Center) {
+                        if (d > 0) {
+                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                Text(d.toString(), color = MaterialTheme.colorScheme.onSurface, fontSize = 11.sp)
+                                if (has) Text("•", color = MaterialTheme.colorScheme.primary, fontSize = 12.sp)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
 
 @Composable fun ColumnScope.StatsScreen(tasks: List<Homework>, accent: Color) {
