@@ -33,7 +33,7 @@ jobs:
           sed -i 's/^@Composable fun SettingsScreen(/@Composable fun ColumnScope.SettingsScreen(/' app/src/main/java/com/example/homeworkreminder/MainActivity.kt
       - name: Fix Jalali calendar syntax
         run: |
-          sed -i '156s/} $/}/' app/src/main/java/com/example/homeworkreminder/MainActivity.kt
+          sed -i '156s/} }$/ }/' app/src/main/java/com/example/homeworkreminder/MainActivity.kt
       - name: Build debug APK
         run: gradle :app:assembleDebug
       - name: Upload APK
